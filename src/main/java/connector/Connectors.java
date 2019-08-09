@@ -1,5 +1,6 @@
 package connector;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
@@ -39,20 +40,26 @@ import java.util.stream.Stream;
  */
 public class Connectors {
 
-    private static final String ES_NODES = "172.16.30.1:9200,172.16.30.2:9200,172.16.30.3:9200";
-    private static final String ES_USERNAME = "esidc";
-    private static final String ES_PASSWORD = "fydata118ES";
-    private static final String MONGO_URI = "mongodb://beam:dpckRN3FTC@172.16.40.3:27701";
-    private static final String REDIS_HOST = "172.16.70.3";
+    private static final String ES_NODES = "localhost:9200";
+    private static final String ES_USERNAME = "username";
+    private static final String ES_PASSWORD = "password";
+    private static final String MONGO_URI = "mongodb://username:password@localhost:27701";
+    private static final String REDIS_HOST = "localhosst";
     private static final int REDIS_PORT = 6379;
-    private static final String REDIS_PASSWORD = "idc@beam";
-    private static final String KAFKA_URL = "172.16.20.7:6667,172.16.20.8:6667,172.16.20.9:6667";
+    private static final String REDIS_PASSWORD = "password";
+    private static final String KAFKA_URL = "localhost:6667";
+    private static final String MYSQL_URI = "jdbc:mysql://localhost:3306/database";
+    private static final String MYSQL_USERNAME = "username";
+    private static final String MYSQL_PASSWORD = "password";
 
     private static RestClient restClient;
     private static MongoClient mongoClient;
     private static Map<String, StringRedisTemplate> stringRedisTemplateMap = new ConcurrentHashMap<>();
     private static Map<String, KafkaConsumer<String,String>> kafkaConsumerMap = new ConcurrentHashMap<>();
     private static KafkaProducer<String, String> kafkaProducer;
+    private static DruidDataSource source;
+
+
 
 
     /**
@@ -181,7 +188,7 @@ public class Connectors {
     /**
      * 获取kafka生产者
      *
-     * @return KafkaProducer<String                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               String>
+     * @return KafkaProducer<String, String>
      */
     public static KafkaProducer<String, String> getKafkaProducer() {
         if (kafkaProducer == null) {
@@ -197,6 +204,21 @@ public class Connectors {
         }
 
         return kafkaProducer;
+    }
+
+    public static DruidDataSource getSource(){
+        if ( source ==null){
+            synchronized (Connectors.class){
+                if (source == null){
+                    source = new DruidDataSource();
+                    source.setDriverClassName("com.mysql.jdbc.Driver");
+                    source.setUrl(MYSQL_URI);
+                    source.setUsername(MYSQL_USERNAME);
+                    source.setPassword(MYSQL_PASSWORD);
+                }
+            }
+        }
+        return source;
     }
 
 }
