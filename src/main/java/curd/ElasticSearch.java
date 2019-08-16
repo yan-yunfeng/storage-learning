@@ -15,6 +15,7 @@ import java.util.Collections;
 import connector.Connectors;
 
 /**
+ * es的常用操作
  * author Yan YunFeng  Email:twd.wuyun@163.com
  * create 19-8-9 下午3:01
  */
